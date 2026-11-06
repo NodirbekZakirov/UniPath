@@ -1,0 +1,82 @@
+{% extends 'base.html' %} {# берём общий каркас #}
+{% load static %} {# подключаем тег static #}
+
+{% block title %}{{ university.name }} — UniPath{% endblock %} {# название вкладки #}
+
+{% block styles %} {# стили этой страницы #}
+    <link rel="stylesheet" href="{% static 'css/university.css' %}"> {# стили страницы программы #}
+{% endblock %} {# конец блока стилей #}
+
+{% block content %} {# начало содержимого #}
+<a class="back-link" href="{% url 'home' %}">← К подбору</a> {# ссылка назад #}
+
+<header class="page-heading detail-heading"> {# заголовок страницы #}
+    <p class="location">{{ university.country }} · {{ university.city }}</p> {# страна и город #}
+    <h1>{{ university.name }}</h1> {# название #}
+    <p>{{ university.get_major_display }} · Бакалавриат</p> {# специальность #}
+</header> {# конец заголовка #}
+
+{% if university.is_demo %} {# если запись учебная #}
+    <p class="data-note">Учебный пример: название, требования и стоимость вымышлены.</p> {# предупреждение #}
+{% endif %} {# конец условия #}
+
+<div class="detail-grid"> {# две колонки #}
+    <div class="detail-body"> {# левая колонка #}
+        <section class="detail-section"> {# раздел описания #}
+            <h2>О программе</h2> {# заголовок #}
+            <p class="description">{{ university.description }}</p> {# текст описания #}
+        </section> {# конец раздела #}
+        <section class="detail-section"> {# раздел условий #}
+            <h2>Условия обучения</h2> {# заголовок #}
+            <dl class="facts"> {# список условий #}
+                <div><dt>Стоимость</dt><dd>${{ university.tuition }} в год</dd></div> {# цена за год #}
+                <div><dt>Минимальный IELTS</dt><dd>{{ university.ielts }}</dd></div> {# требуемый IELTS #}
+                <div><dt>Минимальный GPA</dt><dd>{{ university.gpa }} из 5</dd></div> {# требуемый GPA #}
+                <div><dt>Стипендии</dt><dd>{{ university.scholarship|yesno:"Есть возможности финансирования,Не указаны" }}</dd></div> {# есть ли стипендии #}
+            </dl> {# конец списка #}
+            <p class="fine-print">Проживание и перелёт оплачиваются отдельно. Получение стипендии зависит от её условий и результатов отбора.</p> {# уточнение о расходах #}
+        </section> {# конец раздела #}
+        {% if not university.is_demo %} {# только для реальных вузов #}
+            <section class="detail-section"> {# раздел источника #}
+                <h2>Источник данных</h2> {# заголовок #}
+                <a class="source-link" href="{{ university.source_url }}" target="_blank" rel="noopener noreferrer">Официальный сайт университета ↗</a> {# официальный сайт в новой вкладке #}
+                <p class="fine-print">Проверено {{ university.verified_on|date:'d.m.Y' }}. Требования могут меняться для разных программ и наборов.</p> {# дата проверки #}
+            </section> {# конец раздела #}
+        {% endif %} {# конец условия #}
+        <a class="cost-link" href="{% url 'university_costs' university.pk %}"> {# ссылка на калькулятор #}
+            <strong>Посчитать расходы на год</strong> {# название действия #}
+            <span>Добавьте жильё, питание и перелёты. Стоимость обучения уже будет заполнена. →</span> {# пояснение #}
+        </a> {# конец ссылки #}
+    </div> {# конец левой колонки #}
+
+    <aside class="match-panel" aria-labelledby="match-title"> {# правая панель с баллами #}
+        <h2 id="match-title">По вашим данным</h2> {# заголовок панели #}
+        <p class="detail-score">{{ result.score }}<span> из 100 баллов</span></p> {# сумма баллов #}
+        <p class="profile-summary">IELTS {{ profile.ielts }} · GPA {{ profile.gpa }} · ${{ profile.budget }} в год</p> {# данные абитуриента #}
+        {% for check in result.checks %} {# перебираем проверки #}
+            <div class="check-row"> {# одна проверка #}
+                <span class="check-symbol {{ check.passed|yesno:'pass,fail' }}" aria-hidden="true">{{ check.passed|yesno:"✓,—" }}</span> {# галочка или прочерк #}
+                <div> {# текст проверки #}
+                    <strong>{{ check.label }}</strong> {# название #}
+                    <span>{{ check.passed|yesno:"Соответствует,Не соответствует" }}</span> {# выполнена или нет #}
+                </div> {# конец текста #}
+                <b>{% if check.passed %}{{ check.weight }}{% else %}0{% endif %}<span> / {{ check.weight }}</span></b> {# полученные и максимальные баллы #}
+            </div> {# конец проверки #}
+        {% endfor %} {# конец цикла #}
+        <p class="fine-print">Совпадение этих условий не гарантирует поступление. Проверьте полные требования программы.</p> {# это не гарантия поступления #}
+        {% if not user.is_authenticated %} {# если это гость #}
+            <a class="button full" href="{% url 'login' %}?next={% url 'university' university.pk %}">Войти и сохранить</a> {# предлагаем войти #}
+        {% else %} {# если пользователь вошёл #}
+            <form method="post" action="{% url 'save' university.pk %}"> {# форма сохранения #}
+                {% csrf_token %} {# защита формы #}
+                {% if is_saved %} {# если уже сохранён #}
+                    <button class="button full secondary" name="action" value="remove" type="submit">Удалить из сохранённых</button> {# кнопка удаления #}
+                {% else %} {# если ещё не сохранён #}
+                    <button class="button full" name="action" value="save" type="submit">Сохранить университет</button> {# кнопка сохранения #}
+                {% endif %} {# конец условия #}
+            </form> {# конец формы #}
+        {% endif %} {# конец условия #}
+        <a class="edit-profile" href="{% url 'home' %}#profile-title">Изменить данные профиля</a> {# ссылка к форме профиля #}
+    </aside> {# конец панели #}
+</div> {# конец колонок #}
+{% endblock %} {# конец содержимого #}

@@ -1,0 +1,203 @@
+.selected-program { /* для какого вуза расчёт */
+    margin-bottom: 22px; /* отступ снизу */
+    color: #486587; /* цвет текста */
+    font-size: .875rem; /* размер текста */
+    padding: 12px 16px; /* внутренний отступ */
+    background: #e9f0fc; /* цвет фона */
+    border-radius: 6px; /* скругление углов */
+}
+
+.calculator-layout { /* две колонки калькулятора */
+    display: grid; /* сетка */
+    grid-template-columns: minmax(0, 1.2fr) minmax(390px, 1fr); /* ширина колонок */
+    gap: 28px; /* промежуток между элементами */
+    align-items: start; /* выравнивание по вертикали */
+}
+
+.calculator-form { /* колонка ввода */
+    padding: 26px; /* внутренний отступ */
+    border: 1px solid var(--line); /* рамка */
+    border-radius: 10px; /* скругление углов */
+    background: white; /* цвет фона */
+}
+
+.calculator-form-heading { /* заголовок формы */
+    display: flex; /* элементы в ряд */
+    justify-content: space-between; /* выравнивание по горизонтали */
+    align-items: baseline; /* выравнивание по вертикали */
+    gap: 16px; /* промежуток между элементами */
+}
+
+.calculator-form-heading > span { /* подпись о валюте */
+    font-size: .8125rem; /* размер текста */
+    color: #557499; /* цвет текста */
+}
+
+.form-intro { /* пояснение к форме */
+    font-size: .8125rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+    margin: 12px 0 22px; /* внешний отступ */
+}
+
+.cost-fields { /* поля в две колонки */
+    display: grid; /* сетка */
+    grid-template-columns: 1fr 1fr; /* ширина колонок */
+    gap: 20px 18px; /* промежуток между элементами */
+    align-items: end; /* выравнивание по вертикали */
+}
+
+.cost-fields .field:last-child { /* поле бюджета выделено */
+    grid-column: 1 / -1; /* на всю ширину сетки */
+    padding: 16px; /* внутренний отступ */
+    background: #edf3ff; /* цвет фона */
+    border-radius: 7px; /* скругление углов */
+}
+
+.cost-result { /* колонка результата */
+    overflow: hidden; /* обрезать лишнее */
+    border: 1px solid var(--line); /* рамка */
+    border-radius: 10px; /* скругление углов */
+    background: white; /* цвет фона */
+}
+
+.cost-total { /* синий блок с итогом */
+    background: #204873; /* цвет фона */
+    padding: 26px 28px; /* внутренний отступ */
+    color: white; /* цвет текста */
+}
+
+.cost-total h2 { /* подпись итога */
+    color: #d8e6f9; /* цвет текста */
+    font-size: .9375rem; /* размер текста */
+    font-weight: 500; /* жирность */
+}
+
+.cost-total-number { /* крупная итоговая сумма */
+    font-size: 2.8rem; /* размер текста */
+    font-weight: 650; /* жирность */
+    line-height: 1.2; /* высота строки */
+    margin: 10px 0 8px; /* внешний отступ */
+    letter-spacing: -1px; /* расстояние между буквами */
+    font-variant-numeric: tabular-nums; /* цифры одной ширины */
+}
+
+.cost-total-number span { /* подпись «за год» */
+    margin-left: 12px; /* отступ слева */
+    color: #d8e6f9; /* цвет текста */
+    font-size: .875rem; /* размер текста */
+    font-weight: 400; /* жирность */
+    letter-spacing: 0; /* расстояние между буквами */
+}
+
+.cost-total > p:last-child { /* пояснение к итогу */
+    font-size: .8125rem; /* размер текста */
+    color: #d8e6f9; /* цвет текста */
+}
+
+.budget-status { /* блок о бюджете */
+    padding: 16px 28px; /* внутренний отступ */
+    border-bottom: 1px solid var(--line); /* рамка снизу */
+}
+
+.budget-status strong, /* этот же стиль */
+.budget-status span { /* каждая часть с новой строки */
+    display: block; /* на всю строку */
+}
+
+.budget-status span { /* сумма бюджета */
+    font-size: .8125rem; /* размер текста */
+    margin-top: 3px; /* отступ сверху */
+}
+
+.budget-enough { /* бюджета хватает: зелёный */
+    background: #edf8f1; /* цвет фона */
+    color: #2d7150; /* цвет текста */
+}
+
+.budget-shortfall { /* не хватает: жёлтый */
+    background: #fff3df; /* цвет фона */
+    color: #875711; /* цвет текста */
+}
+
+.cost-breakdown { /* разбивка расходов */
+    padding: 24px 28px; /* внутренний отступ */
+}
+
+.cost-breakdown h3 { /* заголовок разбивки */
+    font-size: .9375rem; /* размер текста */
+}
+
+.expense-bar { /* цветная полоса расходов */
+    display: flex; /* элементы в ряд */
+    gap: 3px; /* промежуток между элементами */
+    height: 12px; /* высота */
+    overflow: hidden; /* обрезать лишнее */
+    border-radius: 4px; /* скругление углов */
+    margin: 18px 0; /* внешний отступ */
+    background: #edf0f5; /* цвет фона */
+}
+
+.expense-bar > span { /* один отрезок полосы */
+    flex-basis: 0; /* начальный размер */
+    min-width: 0; /* минимальная ширина */
+}
+
+.expense-color-1 { /* обучение: синий */
+    background: #4776cc; /* цвет фона */
+}
+
+.expense-color-2 { /* жильё: бирюзовый */
+    background: #53a998; /* цвет фона */
+}
+
+.expense-color-3 { /* питание: золотой */
+    background: #e2aa50; /* цвет фона */
+}
+
+.expense-color-4 { /* перелёты: сиреневый */
+    background: #9c88c7; /* цвет фона */
+}
+
+.expense-lines > div, /* этот же стиль */
+.cost-totals > div { /* строка с суммой */
+    display: flex; /* элементы в ряд */
+    justify-content: space-between; /* выравнивание по горизонтали */
+    align-items: baseline; /* выравнивание по вертикали */
+    gap: 18px; /* промежуток между элементами */
+    padding: 9px 0; /* внутренний отступ */
+    font-size: .875rem; /* размер текста */
+}
+
+.expense-lines dd, /* этот же стиль */
+.cost-totals dd { /* сама сумма */
+    margin: 0; /* без внешнего отступа */
+    font-weight: 600; /* жирность */
+    white-space: nowrap; /* не переносить */
+    font-variant-numeric: tabular-nums; /* цифры одной ширины */
+}
+
+.expense-dot { /* цветная точка у расхода */
+    display: inline-block; /* в строке, но со своими размерами */
+    width: 8px; /* ширина */
+    height: 8px; /* высота */
+    border-radius: 2px; /* скругление углов */
+    margin-right: 8px; /* отступ справа */
+}
+
+.cost-totals { /* итоговые суммы */
+    border-top: 1px solid var(--line); /* рамка сверху */
+    margin-top: 12px; /* отступ сверху */
+    padding-top: 8px; /* внутренний отступ сверху */
+}
+
+.cost-totals > div:last-child { /* последняя строка итогов */
+    color: #214f86; /* цвет текста */
+    border-top: 1px solid var(--line); /* рамка сверху */
+    margin-top: 5px; /* отступ сверху */
+    padding-top: 13px; /* внутренний отступ сверху */
+    font-weight: 650; /* жирность */
+}
+
+.cost-result > .empty { /* сообщение об ошибке */
+    padding: 32px; /* внутренний отступ */
+}

@@ -1,0 +1,159 @@
+.program-list { /* список карточек */
+    display: grid; /* сетка */
+    gap: 12px; /* промежуток между элементами */
+}
+
+.program-row { /* одна карточка программы */
+    display: grid; /* сетка */
+    grid-template-columns: minmax(0, 1.25fr) minmax(260px, 1fr) 175px; /* ширина колонок */
+    gap: 24px; /* промежуток между элементами */
+    padding: 22px 24px; /* внутренний отступ */
+    border: 1px solid var(--line); /* рамка */
+    border-left: 4px solid #6c91d0; /* рамка слева */
+    border-radius: 8px; /* скругление углов */
+    background: white; /* цвет фона */
+    align-items: center; /* выравнивание по вертикали */
+}
+
+.program-info { /* левая колонка карточки */
+    min-width: 0; /* минимальная ширина */
+}
+
+.program-info h3 { /* название в карточке */
+    margin: 5px 0; /* внешний отступ */
+    overflow-wrap: anywhere; /* перенос длинных слов */
+}
+
+.program-info h3 a { /* ссылка-название */
+    color: var(--ink); /* цвет текста */
+    text-decoration: none; /* без подчёркивания */
+}
+
+.program-info h3 a:hover { /* ссылка-название при наведении */
+    color: var(--blue); /* цвет текста */
+    text-decoration: underline; /* с подчёркиванием */
+}
+
+.major { /* ярлык специальности */
+    display: inline-block; /* в строке, но со своими размерами */
+    font-size: .8125rem; /* размер текста */
+    color: #315c98; /* цвет текста */
+    background: #edf3ff; /* цвет фона */
+    padding: 2px 7px; /* внутренний отступ */
+    border-radius: 4px; /* скругление углов */
+}
+
+.record-meta { /* дата проверки */
+    margin-top: 9px; /* отступ сверху */
+    color: var(--muted); /* цвет текста */
+    font-size: .75rem; /* размер текста */
+}
+
+.record-meta span { /* метка о стипендиях */
+    margin-left: 12px; /* отступ слева */
+    padding-left: 12px; /* внутренний отступ слева */
+    border-left: 1px solid var(--line); /* рамка слева */
+    color: #376e59; /* цвет текста */
+}
+
+.requirements { /* колонки с требованиями */
+    display: grid; /* сетка */
+    grid-template-columns: .7fr .7fr 1.3fr; /* ширина колонок */
+    gap: 14px; /* промежуток между элементами */
+    align-self: center; /* своё выравнивание */
+}
+
+.requirements dt { /* подпись требования */
+    color: var(--muted); /* цвет текста */
+    font-size: .75rem; /* размер текста */
+    margin-bottom: 4px; /* отступ снизу */
+}
+
+.requirements dd { /* значение требования */
+    margin: 0; /* без внешнего отступа */
+    font-size: 1rem; /* размер текста */
+    font-weight: 600; /* жирность */
+    font-variant-numeric: tabular-nums; /* цифры одной ширины */
+}
+
+.requirements small { /* предупреждение о несовпадении */
+    display: inline-block; /* в строке, но со своими размерами */
+    color: #975e17; /* цвет текста */
+    background: #fff4de; /* цвет фона */
+    padding: 1px 5px; /* внутренний отступ */
+    border-radius: 3px; /* скругление углов */
+    font-size: .75rem; /* размер текста */
+    margin-top: 5px; /* отступ сверху */
+}
+
+.program-action { /* правая колонка карточки */
+    text-align: right; /* текст справа */
+}
+
+.score { /* баллы */
+    color: var(--ink); /* цвет текста */
+    font-size: 1.7rem; /* размер текста */
+    font-weight: 600; /* жирность */
+    line-height: 1.2; /* высота строки */
+    font-variant-numeric: tabular-nums; /* цифры одной ширины */
+}
+
+.score.complete { /* зелёные баллы при 100 */
+    color: #277456; /* цвет текста */
+}
+
+.score span { /* подпись «/ 100» */
+    color: var(--muted); /* цвет текста */
+    font-size: .8125rem; /* размер текста */
+    font-weight: 400; /* жирность */
+}
+
+.details-link { /* ссылка на условия */
+    display: inline-block; /* в строке, но со своими размерами */
+    margin-top: 10px; /* отступ сверху */
+    font-size: .875rem; /* размер текста */
+    text-decoration: none; /* без подчёркивания */
+}
+
+.details-link:hover { /* ссылка при наведении */
+    text-decoration: underline; /* с подчёркиванием */
+}
+
+.details-link span { /* стрелка у ссылки */
+    margin-left: 4px; /* отступ слева */
+}
+
+.saved-label { /* метка «Сохранено» */
+    display: block; /* на всю строку */
+    color: var(--muted); /* цвет текста */
+    font-size: .75rem; /* размер текста */
+    margin-top: 9px; /* отступ сверху */
+}
+
+.remove { /* кнопка удаления */
+    color: var(--red); /* цвет текста */
+    background: transparent; /* прозрачный фон */
+    padding: 0; /* без внутреннего отступа */
+    font-size: .8125rem; /* размер текста */
+    margin-top: 12px; /* отступ сверху */
+    text-decoration: underline; /* с подчёркиванием */
+    text-underline-offset: 3px; /* отступ подчёркивания */
+}
+
+.subject-business { /* полоса бизнес-программ */
+    border-left-color: #58a68c; /* цвет левой рамки */
+}
+
+.subject-business .major { /* ярлык бизнеса */
+    background: #eaf6f0; /* цвет фона */
+    color: #316c57; /* цвет текста */
+}
+
+.subject-engineering { /* полоса инженерных программ */
+    border-left-color: #dca451; /* цвет левой рамки */
+}
+
+.subject-engineering .major { /* ярлык инженерии */
+    background: #fff3df; /* цвет фона */
+    color: #946022; /* цвет текста */
+}

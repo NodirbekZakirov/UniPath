@@ -1,0 +1,39 @@
+.auth-panel { /* панель входа и регистрации */
+    max-width: 460px; /* максимальная ширина */
+    margin: 50px auto 24px; /* внешний отступ */
+    padding: 32px; /* внутренний отступ */
+    background: white; /* цвет фона */
+    border: 1px solid var(--line); /* рамка */
+    border-top: 4px solid #4778ce; /* рамка сверху */
+    border-radius: 10px; /* скругление углов */
+}
+
+.auth-panel > p { /* пояснение под заголовком */
+    color: var(--muted); /* цвет текста */
+    margin-top: 16px; /* отступ сверху */
+}
+
+.auth-form { /* форма в панели */
+    margin-top: 28px; /* отступ сверху */
+}
+
+.auth-form .field { /* поле в панели */
+    margin-bottom: 22px; /* отступ снизу */
+}
+
+.auth-switch { /* ссылка на другую форму */
+    padding-top: 20px; /* внутренний отступ сверху */
+    border-top: 1px solid var(--line); /* рамка сверху */
+    font-size: .875rem; /* размер текста */
+}
+
+.help { /* подсказка к полю */
+    font-size: .8125rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+    margin-top: 7px; /* отступ сверху */
+}
+
+.help ul { /* список правил пароля */
+    margin: 8px 0; /* внешний отступ */
+    padding-left: 18px; /* внутренний отступ слева */
+}

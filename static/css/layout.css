@@ -1,0 +1,141 @@
+.container { /* основная часть страницы */
+    max-width: 1264px; /* максимальная ширина */
+    margin: auto; /* по центру */
+    padding: 0 32px 56px; /* внутренний отступ */
+    min-height: 75vh; /* минимальная высота */
+}
+
+.skip { /* скрытая ссылка быстрого перехода */
+    position: absolute; /* убираем из общего потока */
+    top: -100px; /* положение сверху */
+    left: 16px; /* положение слева */
+    background: white; /* цвет фона */
+    padding: 12px; /* внутренний отступ */
+    z-index: 10; /* поверх других */
+}
+
+.skip:focus { /* показываем её при фокусе */
+    top: 10px; /* положение сверху */
+}
+
+.site-header { /* тёмная шапка */
+    background: #193551; /* цвет фона */
+    border-bottom: 1px solid #193551; /* рамка снизу */
+}
+
+.header-inner { /* содержимое шапки в один ряд */
+    max-width: 1264px; /* максимальная ширина */
+    margin: auto; /* по центру */
+    padding: 0 32px; /* внутренний отступ */
+    min-height: 82px; /* минимальная высота */
+    display: flex; /* элементы в ряд */
+    align-items: center; /* выравнивание по вертикали */
+    gap: 38px; /* промежуток между элементами */
+}
+
+.brand { /* логотип */
+    font: 700 1.9rem/1 Georgia, serif; /* шрифт */
+    letter-spacing: -1.5px; /* расстояние между буквами */
+    color: white; /* цвет текста */
+    text-decoration: none; /* без подчёркивания */
+}
+
+.brand span { /* золотая точка логотипа */
+    color: #ffc769; /* цвет текста */
+}
+
+.navigation { /* меню */
+    display: flex; /* элементы в ряд */
+    align-self: stretch; /* своё выравнивание */
+    gap: 26px; /* промежуток между элементами */
+}
+
+.navigation a { /* ссылки меню */
+    display: flex; /* элементы в ряд */
+    align-items: center; /* выравнивание по вертикали */
+    color: #c4d3e5; /* цвет текста */
+    text-decoration: none; /* без подчёркивания */
+    font-size: .9375rem; /* размер текста */
+    border-bottom: 3px solid transparent; /* рамка снизу */
+    padding-top: 3px; /* внутренний отступ сверху */
+}
+
+.navigation a[aria-current] { /* открытый раздел меню */
+    color: white; /* цвет текста */
+    border-color: #ffc769; /* цвет рамки */
+}
+
+.account { /* блок аккаунта */
+    margin-left: auto; /* отступ слева */
+    display: flex; /* элементы в ряд */
+    align-items: center; /* выравнивание по вертикали */
+    gap: 16px; /* промежуток между элементами */
+    font-size: .875rem; /* размер текста */
+    color: #e5edf7; /* цвет текста */
+}
+
+.account > a { /* ссылки в блоке аккаунта */
+    text-decoration: none; /* без подчёркивания */
+    color: inherit; /* цвет как у родителя */
+}
+
+.username { /* имя пользователя */
+    max-width: 120px; /* максимальная ширина */
+    overflow-wrap: anywhere; /* перенос длинных слов */
+    color: #c4d3e5; /* цвет текста */
+}
+
+.text-button { /* кнопка «Выйти» */
+    padding: 0; /* без внутреннего отступа */
+    color: #e5edf7; /* цвет текста */
+    background: transparent; /* прозрачный фон */
+    font-size: inherit; /* размер как у родителя */
+}
+
+.page-heading { /* заголовок страницы */
+    padding: 34px 0 25px; /* внутренний отступ */
+}
+
+.page-heading p { /* пояснение под заголовком */
+    margin-top: 12px; /* отступ сверху */
+    color: var(--muted); /* цвет текста */
+}
+
+.footer { /* подвал сайта */
+    max-width: 1200px; /* максимальная ширина */
+    margin: auto; /* по центру */
+    border-top: 1px solid var(--line); /* рамка сверху */
+    padding: 23px 0; /* внутренний отступ */
+    display: flex; /* элементы в ряд */
+    justify-content: space-between; /* выравнивание по горизонтали */
+    gap: 20px; /* промежуток между элементами */
+    color: var(--muted); /* цвет текста */
+    font-size: .8125rem; /* размер текста */
+}
+
+.brand:hover, /* этот же стиль */
+.navigation a:hover { /* логотип и меню при наведении */
+    color: white; /* цвет текста */
+}
+
+.account .button.secondary { /* кнопка регистрации в шапке */
+    color: white; /* цвет текста */
+    border-color: #738aa6; /* цвет рамки */
+}
+
+.account .button.secondary:hover { /* она же при наведении */
+    background: #2c4b6c; /* цвет фона */
+}
+
+.page-heading h1 > span { /* синее слово в заголовке */
+    color: var(--blue); /* цвет текста */
+}
+
+.section-label { /* маленькая подпись над заголовком */
+    display: block; /* на всю строку */
+    color: #53708f; /* цвет текста */
+    font-size: .75rem; /* размер текста */
+    font-weight: 650; /* жирность */
+    letter-spacing: 1.4px; /* расстояние между буквами */
+    margin-bottom: 9px; /* отступ снизу */
+}

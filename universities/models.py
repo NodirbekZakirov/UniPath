@@ -1,24 +1,37 @@
-from django.conf import settings  # Получаем модель пользователя из настроек Django | from/import подключают указанные имена.
-from django.core.validators import MinValueValidator, MaxValueValidator  # Импортируем проверки допустимых диапазонов | from/import подключают указанные имена.
-from django.db import models  # Подключаем ORM для описания таблиц Python-классами | from/import подключают указанные имена.
-MAJORS = [("cs", "Computer Science"), ("business", "Business & Management"), ("engineering", "Engineering")]  # Храним короткие коды специальностей и читаемые названия.
-class University(models.Model):  # Описываем одну запись университета и выбранной программы | class объявляет класс; имя в скобках — родитель, от которого наследуются возможности.
-    name = models.CharField("Название", max_length=120)  # Храним название длиной до 120 символов | CharField — поле короткого текста; max_length ограничивает длину | max_length — предельная длина текста.
-    country = models.CharField("Страна", max_length=60)  # Храним страну для фильтрации | CharField — поле короткого текста; max_length ограничивает длину | max_length — предельная длина текста.
-    city = models.CharField("Город", max_length=60)  # Храним город кампуса | CharField — поле короткого текста; max_length ограничивает длину | max_length — предельная длина текста.
-    major = models.CharField("Программа", max_length=20, choices=MAJORS)  # Разрешаем только специальности из списка | CharField — поле короткого текста; max_length ограничивает длину | max_length — предельная длина текста, choices — разрешённые варианты.
-    ielts = models.FloatField("Минимальный IELTS", validators=[MinValueValidator(0), MaxValueValidator(9)])  # Требуем IELTS в диапазоне от 0 до 9 | FloatField — поле дробного числа; min/max или validators задают границы | MinValueValidator — валидатор нижней допустимой границы | MaxValueValidator — валидатор верхней допустимой границы | validators — проверки поля.
-    gpa = models.FloatField("Минимальный GPA / 5", validators=[MinValueValidator(0), MaxValueValidator(5)])  # Используем единую пятибалльную шкалу среднего балла | FloatField — поле дробного числа; min/max или validators задают границы | MinValueValidator — валидатор нижней допустимой границы | MaxValueValidator — валидатор верхней допустимой границы | validators — проверки поля.
-    tuition = models.PositiveIntegerField("Обучение, USD/год")  # Храним неотрицательную годовую стоимость обучения в долларах | PositiveIntegerField — поле неотрицательного целого числа, включая ноль.
-    scholarship = models.BooleanField("Есть стипендии", default=False)  # Отмечаем наличие возможностей получения стипендии | BooleanField — поле логического значения True/False | default — значение по умолчанию.
-    description = models.TextField("Описание", max_length=1500)  # Храним краткое описание программы | TextField — поле длинного текста | max_length — предельная длина текста.
-    source_url = models.URLField("Официальный источник", blank=True)  # Разрешаем пустой адрес только для учебных записей | URLField — поле веб-адреса с проверкой формата при валидации | blank — разрешение пустого значения в форме.
-    verified_on = models.DateField("Дата проверки источника", null=True, blank=True)  # Сохраняем дату ручной проверки, если она есть | DateField — поле календарной даты; blank разрешает пустую форму, null — NULL в базе | null — разрешение NULL в базе, blank — разрешение пустого значения в форме.
-    is_demo = models.BooleanField("Учебный пример", default=True)  # Явно отделяем вымышленные данные от проверенных | BooleanField — поле логического значения True/False | default — значение по умолчанию.
-    def __str__(self):  # Определяем понятную подпись объекта в админке | def объявляет функцию/метод; self — текущий объект; задаёт его текстовую подпись, например в админке.
-        return self.name  # Возвращаем название вместо технического представления объекта | return завершает вызов и отдаёт результат вызывающему коду.
-class SavedUniversity(models.Model):  # Описываем связь пользователя с сохранённым университетом | class объявляет класс; имя в скобках — родитель, от которого наследуются возможности.
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Удаляем сохранения автоматически при удалении их владельца | ForeignKey — ссылка на запись другой таблицы; on_delete задаёт поведение при её удалении | on_delete — правило удаления связанных записей.
-    university = models.ForeignKey(University, on_delete=models.CASCADE)  # Удаляем сохранения автоматически при удалении университета | ForeignKey — ссылка на запись другой таблицы; on_delete задаёт поведение при её удалении | on_delete — правило удаления связанных записей.
-    class Meta:  # Настраиваем ограничения таблицы связи | class объявляет класс; имя в скобках — родитель, от которого наследуются возможности.
-        constraints = [models.UniqueConstraint(fields=["user", "university"], name="unique_user_university")]  # Запрещаем одному пользователю сохранять один вуз дважды | UniqueConstraint — ограничение уникальности указанной пары полей в базе.
+from django.conf import settings  # настройки проекта
+from django.core.validators import MaxValueValidator, MinValueValidator  # проверки минимума и максимума
+from django.db import models  # инструменты для таблиц
+
+MAJORS = [  # список специальностей: код и название
+    ("cs", "Computer Science"),  # компьютерные науки
+    ("business", "Business & Management"),  # бизнес
+    ("engineering", "Engineering"),  # инженерия
+]  # конец списка
+
+
+class University(models.Model):  # таблица: одна запись — одна программа вуза
+    name = models.CharField("Название", max_length=120)  # название
+    country = models.CharField("Страна", max_length=60)  # страна
+    city = models.CharField("Город", max_length=60)  # город
+    major = models.CharField("Программа", max_length=20, choices=MAJORS)  # специальность из списка MAJORS
+    ielts = models.FloatField("Минимальный IELTS", validators=[MinValueValidator(0), MaxValueValidator(9)])  # минимальный IELTS от 0 до 9
+    gpa = models.FloatField("Минимальный GPA / 5", validators=[MinValueValidator(0), MaxValueValidator(5)])  # минимальный GPA от 0 до 5
+    tuition = models.PositiveIntegerField("Обучение, USD/год")  # стоимость обучения за год в USD
+    scholarship = models.BooleanField("Есть стипендии", default=False)  # есть ли стипендии
+    description = models.TextField("Описание", max_length=1500)  # описание программы
+    source_url = models.URLField("Официальный источник", blank=True)  # ссылка на официальный сайт
+    verified_on = models.DateField("Дата проверки источника", null=True, blank=True)  # когда проверили данные
+    is_demo = models.BooleanField("Учебный пример", default=True)  # учебная запись или реальная
+
+    def __str__(self):  # как объект подписан в админке
+        return self.name  # показываем название
+
+
+class SavedUniversity(models.Model):  # таблица: кто какой вуз сохранил
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # пользователь, удалится вместе с записью
+    university = models.ForeignKey(University, on_delete=models.CASCADE)  # университет, удалится вместе с записью
+
+    class Meta:  # дополнительные настройки таблицы
+        constraints = [  # ограничения таблицы
+            models.UniqueConstraint(fields=["user", "university"], name="unique_user_university"),  # нельзя сохранить один вуз дважды
+        ]  # конец списка

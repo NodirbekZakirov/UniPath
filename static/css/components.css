@@ -1,0 +1,123 @@
+.button { /* основная кнопка */
+    display: inline-flex; /* ряд внутри строки */
+    justify-content: center; /* выравнивание по горизонтали */
+    align-items: center; /* выравнивание по вертикали */
+    min-height: 44px; /* минимальная высота */
+    padding: 11px 22px; /* внутренний отступ */
+    border: 1px solid var(--blue); /* рамка */
+    border-radius: 7px; /* скругление углов */
+    background: var(--blue); /* цвет фона */
+    color: white; /* цвет текста */
+    font-size: .9375rem; /* размер текста */
+    font-weight: 600; /* жирность */
+    text-decoration: none; /* без подчёркивания */
+}
+
+.button:hover { /* кнопка при наведении */
+    background: #1c4d9e; /* цвет фона */
+    border-color: #1c4d9e; /* цвет рамки */
+    color: white; /* цвет текста */
+}
+
+.button.secondary { /* второстепенная кнопка */
+    background: transparent; /* прозрачный фон */
+    color: var(--blue); /* цвет текста */
+    border-color: #bac6cf; /* цвет рамки */
+}
+
+.button.secondary:hover { /* второстепенная при наведении */
+    background: var(--paper); /* цвет фона */
+}
+
+.button.small { /* маленькая кнопка */
+    padding: 7px 15px; /* внутренний отступ */
+    min-height: 38px; /* минимальная высота */
+    font-size: .875rem; /* размер текста */
+}
+
+.button.full { /* кнопка на всю ширину */
+    width: 100%; /* на всю ширину */
+}
+
+.field { /* одно поле формы */
+    min-width: 0; /* минимальная ширина */
+}
+
+.field label { /* подпись поля */
+    display: block; /* на всю строку */
+    font-size: .875rem; /* размер текста */
+    font-weight: 600; /* жирность */
+    margin-bottom: 6px; /* отступ снизу */
+}
+
+.field input, /* этот же стиль */
+.field select { /* само поле ввода */
+    display: block; /* на всю строку */
+    width: 100%; /* на всю ширину */
+    min-height: 44px; /* минимальная высота */
+    padding: 9px 11px; /* внутренний отступ */
+    border: 1px solid #bfccdc; /* рамка */
+    border-radius: 6px; /* скругление углов */
+    background: #fbfcff; /* цвет фона */
+    color: var(--ink); /* цвет текста */
+}
+
+.field.invalid input, /* этот же стиль */
+.field.invalid select { /* поле с ошибкой */
+    border-color: var(--red); /* цвет рамки */
+}
+
+.count { /* счётчик программ */
+    color: #315c98; /* цвет текста */
+    background: #e5edfb; /* цвет фона */
+    border-radius: 5px; /* скругление углов */
+    padding: 2px 8px; /* внутренний отступ */
+    font: 600 .875rem/1.5 "Segoe UI", Arial, sans-serif; /* шрифт */
+    margin-left: 7px; /* отступ слева */
+    letter-spacing: 0; /* расстояние между буквами */
+    vertical-align: middle; /* выравнивание в строке */
+}
+
+.data-note { /* мелкая заметка */
+    font-size: .8125rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+    margin: 9px 0 18px; /* внешний отступ */
+    max-width: 760px; /* максимальная ширина */
+}
+
+.location { /* страна и город */
+    color: var(--muted); /* цвет текста */
+    font-size: .8125rem; /* размер текста */
+}
+
+.empty { /* сообщение о пустом списке */
+    padding: 44px 0; /* внутренний отступ */
+}
+
+.empty p { /* текст сообщения */
+    color: var(--muted); /* цвет текста */
+    margin: 12px 0 22px; /* внешний отступ */
+    max-width: 580px; /* максимальная ширина */
+}
+
+.notice { /* уведомление об успехе */
+    margin-top: 22px; /* отступ сверху */
+    border-left: 3px solid #49745f; /* рамка слева */
+    padding: 12px 16px; /* внутренний отступ */
+    background: #f0f6f2; /* цвет фона */
+    color: #305b43; /* цвет текста */
+    font-size: .875rem; /* размер текста */
+}
+
+.fine-print { /* мелкий поясняющий текст */
+    color: var(--muted); /* цвет текста */
+    font-size: .8125rem; /* размер текста */
+    margin: 18px 0; /* внешний отступ */
+}
+
+.errorlist { /* список ошибок поля */
+    color: var(--red); /* цвет текста */
+    font-size: .8125rem; /* размер текста */
+    margin: 8px 0; /* внешний отступ */
+    padding-left: 18px; /* внутренний отступ слева */
+}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %} {# берём общий каркас #}
+{% load static %} {# подключаем тег static #}
+
+{% block title %}Калькулятор расходов — UniPath{% endblock %} {# название вкладки #}
+
+{% block styles %} {# стили этой страницы #}
+    <link rel="stylesheet" href="{% static 'css/costs.css' %}"> {# стили калькулятора #}
+{% endblock %} {# конец блока стилей #}
+
+{% block content %} {# начало содержимого #}
+<header class="page-heading"> {# заголовок страницы #}
+    <span class="section-label">ПЛАНИРОВАНИЕ</span> {# маленькая подпись #}
+    <h1>Сколько стоит <span>учёба за рубежом</span></h1> {# главный заголовок #}
+    <p>Соберите расходы на год и проверьте, хватит ли вашего бюджета.</p> {# короткое пояснение #}
+</header> {# конец заголовка #}
+
+{% if university %} {# если выбран конкретный вуз #}
+    <p class="selected-program">Расчёт для <a href="{% url 'university' university.pk %}">{{ university.name }}</a> · {{ university.country }}{% if university.is_demo %} · Учебный пример{% endif %}</p> {# для какого вуза расчёт #}
+{% endif %} {# конец условия #}
+
+<div class="calculator-layout"> {# две колонки #}
+    <section class="calculator-form" aria-labelledby="cost-form-title"> {# левая колонка: ввод #}
+        <div class="calculator-form-heading"> {# заголовок формы #}
+            <h2 id="cost-form-title">Ваши расходы</h2> {# название #}
+            <span>Все суммы в USD</span> {# валюта #}
+        </div> {# конец заголовка формы #}
+        <p class="form-intro">Начальные суммы условные. В месячные траты включите питание, транспорт и страховку; разовые сборы распределите по месяцам проживания.</p> {# пояснение к суммам #}
+        <form method="get"> {# форма отправляет данные в адресе #}
+            <div class="cost-fields"> {# сетка полей #}
+                {% for field in form %} {# перебираем поля формы #}
+                    {% include 'includes/form_field.html' with highlight_errors=True %} {# показываем поле, ошибки красным #}
+                {% endfor %} {# конец цикла #}
+            </div> {# конец сетки #}
+            <p class="fine-print">Общий бюджет здесь включает все расходы. Стипендию учитывайте только в сумме, которую сможете использовать для их оплаты.</p> {# уточнение про бюджет #}
+            <button class="button full" type="submit">Рассчитать расходы</button> {# кнопка расчёта #}
+        </form> {# конец формы #}
+    </section> {# конец левой колонки #}
+
+    <section class="cost-result" aria-labelledby="cost-result-title"> {# правая колонка: результат #}
+        {% if result %} {# если расчёт есть #}
+            <div class="cost-total"> {# главный итог #}
+                <h2 id="cost-result-title">Нужно покрыть самостоятельно</h2> {# подпись итога #}
+                <p class="cost-total-number">${{ result.needed }}<span>за год</span></p> {# сумма за год #}
+                <p>С учётом стипендии и {{ result.months }} мес. проживания</p> {# стипендия и месяцы #}
+            </div> {# конец итога #}
+            <div class="budget-status {% if result.shortfall %}budget-shortfall{% else %}budget-enough{% endif %}"> {# хватает ли бюджета, цвет по результату #}
+                <strong>{% if result.shortfall %}Не хватает ${{ result.shortfall }}{% elif result.balance %}Остаётся ${{ result.balance }}{% else %}Бюджет покрывает расходы ровно{% endif %}</strong> {# остаток или нехватка #}
+                <span>Ваш общий бюджет: ${{ result.budget }} в год</span> {# бюджет пользователя #}
+            </div> {# конец блока бюджета #}
+            <div class="cost-breakdown"> {# из чего состоит сумма #}
+                <h3>Из чего складывается сумма</h3> {# заголовок #}
+                <div class="expense-bar" aria-hidden="true"> {# цветная полоса расходов #}
+                    {% for item in result.items %} {# перебираем расходы #}
+                        <span class="expense-color-{{ forloop.counter }}" style="flex-grow: {{ item.amount }};"></span> {# отрезок по размеру суммы #}
+                    {% endfor %} {# конец цикла #}
+                </div> {# конец полосы #}
+                <dl class="expense-lines"> {# список расходов #}
+                    {% for item in result.items %} {# перебираем расходы #}
+                        <div> {# одна строка #}
+                            <dt><span class="expense-dot expense-color-{{ forloop.counter }}" aria-hidden="true"></span>{{ item.label }}</dt> {# цвет и название #}
+                            <dd>${{ item.amount }}</dd> {# сумма #}
+                        </div> {# конец строки #}
+                    {% endfor %} {# конец цикла #}
+                </dl> {# конец списка #}
+                <dl class="cost-totals"> {# итоговые суммы #}
+                    <div><dt>Всего до стипендии</dt><dd>${{ result.total }}</dd></div> {# все расходы #}
+                    <div><dt>Стипендия, учтено</dt><dd>−${{ result.funding }}</dd></div> {# вычитаем стипендию #}
+                    <div><dt>К оплате</dt><dd>${{ result.needed }}</dd></div> {# сколько платить #}
+                </dl> {# конец итогов #}
+                <p class="fine-print">Стипендия уменьшает сумму не ниже нуля. Расчёт зависит от введённых значений; фактические цены и условия финансирования уточняйте отдельно.</p> {# уточнение о расчёте #}
+            </div> {# конец разбивки #}
+        {% else %} {# если в форме ошибка #}
+            <div class="empty"> {# сообщение об ошибке #}
+                <h2 id="cost-result-title">Проверьте введённые суммы</h2> {# заголовок #}
+                <p>Исправьте отмеченные поля и повторите расчёт. Суммы должны быть неотрицательными, срок проживания — от 1 до 12 месяцев.</p> {# что исправить #}
+            </div> {# конец сообщения #}
+        {% endif %} {# конец условия #}
+    </section> {# конец правой колонки #}
+</div> {# конец колонок #}
+{% endblock %} {# конец содержимого #}

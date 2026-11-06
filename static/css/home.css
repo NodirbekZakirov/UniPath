@@ -1,0 +1,119 @@
+.profile { /* блок формы подбора */
+    background: white; /* цвет фона */
+    padding: 24px; /* внутренний отступ */
+    border: 1px solid var(--line); /* рамка */
+    border-top: 4px solid #4778ce; /* рамка сверху */
+    border-radius: 10px; /* скругление углов */
+}
+
+.profile-heading { /* заголовок формы */
+    display: flex; /* элементы в ряд */
+    justify-content: space-between; /* выравнивание по горизонтали */
+    align-items: baseline; /* выравнивание по вертикали */
+    gap: 16px; /* промежуток между элементами */
+    margin-bottom: 18px; /* отступ снизу */
+}
+
+.profile-heading > span { /* подсказка у заголовка */
+    font-size: .8125rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+}
+
+.profile-fields { /* поля формы в один ряд */
+    display: grid; /* сетка */
+    grid-template-columns: .65fr .65fr 1.1fr 1.5fr 1.1fr; /* ширина колонок */
+    gap: 16px; /* промежуток между элементами */
+    align-items: start; /* выравнивание по вертикали */
+}
+
+.form-bottom { /* низ формы */
+    display: flex; /* элементы в ряд */
+    justify-content: space-between; /* выравнивание по горизонтали */
+    align-items: center; /* выравнивание по вертикали */
+    gap: 20px; /* промежуток между элементами */
+    margin-top: 18px; /* отступ сверху */
+}
+
+.form-bottom p { /* пояснение внизу формы */
+    font-size: .8125rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+}
+
+.results { /* блок результатов */
+    margin-top: 32px; /* отступ сверху */
+}
+
+.results-heading { /* заголовок результатов */
+    display: flex; /* элементы в ряд */
+    justify-content: space-between; /* выравнивание по горизонтали */
+    align-items: baseline; /* выравнивание по вертикали */
+    gap: 20px; /* промежуток между элементами */
+}
+
+.results-heading > span { /* подпись о сортировке */
+    font-size: .875rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+}
+
+.pagination { /* переход по страницам */
+    display: flex; /* элементы в ряд */
+    align-items: center; /* выравнивание по вертикали */
+    justify-content: flex-end; /* выравнивание по горизонтали */
+    flex-wrap: wrap; /* перенос на новую строку */
+    gap: 26px; /* промежуток между элементами */
+    margin-top: 22px; /* отступ сверху */
+    font-size: .875rem; /* размер текста */
+}
+
+.pagination span { /* номер страницы */
+    color: var(--muted); /* цвет текста */
+}
+
+.method { /* раскрывающееся пояснение */
+    margin-top: 32px; /* отступ сверху */
+    max-width: 700px; /* максимальная ширина */
+}
+
+.method summary { /* заголовок пояснения */
+    color: var(--blue); /* цвет текста */
+    font-size: .875rem; /* размер текста */
+    padding: 8px 0; /* внутренний отступ */
+}
+
+.method p { /* текст пояснения */
+    color: var(--muted); /* цвет текста */
+    font-size: .875rem; /* размер текста */
+    margin-top: 10px; /* отступ сверху */
+}
+
+.home-heading { /* заголовок главной в один ряд */
+    display: flex; /* элементы в ряд */
+    align-items: center; /* выравнивание по вертикали */
+    justify-content: space-between; /* выравнивание по горизонтали */
+    gap: 24px; /* промежуток между элементами */
+}
+
+.calculator-shortcut { /* ссылка на калькулятор */
+    display: block; /* на всю строку */
+    min-width: 290px; /* минимальная ширина */
+    padding: 18px 22px; /* внутренний отступ */
+    border-left: 3px solid #dfac4d; /* рамка слева */
+    background: #fff6e6; /* цвет фона */
+    color: #6e4b1c; /* цвет текста */
+    border-radius: 0 8px 8px 0; /* скругление углов */
+    text-decoration: none; /* без подчёркивания */
+}
+
+.calculator-shortcut strong, /* этот же стиль */
+.calculator-shortcut span { /* каждая часть с новой строки */
+    display: block; /* на всю строку */
+}
+
+.calculator-shortcut strong { /* вопрос в ссылке */
+    font-size: .9375rem; /* размер текста */
+}
+
+.calculator-shortcut span { /* пояснение в ссылке */
+    font-size: .8125rem; /* размер текста */
+    margin-top: 5px; /* отступ сверху */
+}

@@ -1,22 +1,29 @@
-from django.contrib import admin  # Подключаем встроенный интерфейс управления моделями | from/import подключают указанные имена.
-from django.core.exceptions import ValidationError  # Возвращаем понятные ошибки проверки источников | from/import подключают указанные имена.
-from django import forms  # Используем форму для дополнительных правил админки | from/import подключают указанные имена.
-from .models import University, SavedUniversity  # Импортируем модели, доступные администратору | from/import подключают указанные имена.
-class UniversityAdminForm(forms.ModelForm):  # Добавляем правило для реально проверенных записей | class объявляет класс; имя в скобках — родитель, от которого наследуются возможности.
-    class Meta:  # Настраиваем стандартную форму модели | class объявляет класс; имя в скобках — родитель, от которого наследуются возможности.
-        model = University  # Редактируем таблицу университетов.
-        fields = "__all__"  # Показываем все её поля администратору.
-    def clean(self):  # Проверяем согласованность источника и статуса записи | def объявляет функцию/метод; self — форма админки; проверяет совместное правило источника и даты реальной записи.
-        data = super().clean()  # Сначала запускаем стандартные проверки всех полей | clean — метод общей проверки нескольких полей формы; возвращает проверенные данные | super — даёт доступ к реализации родительского класса.
-        if not data.get("is_demo", True) and (not data.get("source_url") or not data.get("verified_on")):  # Реальная запись должна иметь источник и дату проверки | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа.
-            raise ValidationError("Для реального вуза укажите официальный источник и дату его проверки.")  # Не разрешаем выдавать неподтверждённые сведения за проверенные | ValidationError — ошибка проверки, показываемая формой пользователю.
-        return data  # Возвращаем корректные значения для сохранения | return завершает вызов и отдаёт результат вызывающему коду.
-@admin.register(University)  # Регистрируем модель университета в админке | register — подключает модель к административной панели.
-class UniversityAdmin(admin.ModelAdmin):  # Настраиваем готовую таблицу управления | class объявляет класс; имя в скобках — родитель, от которого наследуются возможности.
-    form = UniversityAdminForm  # Используем проверку источника при добавлении и редактировании.
-    list_display = ("name", "country", "major", "ielts", "gpa", "tuition", "is_demo")  # Выводим ключевые поля в списке.
-    list_filter = ("country", "major", "is_demo")  # Добавляем стандартные фильтры без собственного кода интерфейса.
-    search_fields = ("name", "city")  # Разрешаем поиск по названию и городу.
-admin.site.register(SavedUniversity)  # Разрешаем администратору просматривать связи избранного | register — подключает модель к административной панели.
-admin.site.site_header = "UniPath · управление"  # Меняем заголовок административной панели.
-admin.site.site_title = "UniPath Admin"  # Меняем название вкладки админки.
+from django import forms  # инструменты для форм
+from django.contrib import admin  # встроенная админка
+from django.core.exceptions import ValidationError  # ошибка проверки формы
+
+from .models import SavedUniversity, University  # наши таблицы
+
+admin.site.site_header = "UniPath · управление"  # заголовок админки
+admin.site.site_title = "UniPath Admin"  # название вкладки
+admin.site.register(SavedUniversity)  # показываем сохранения в админке
+
+
+class UniversityAdminForm(forms.ModelForm):  # форма вуза в админке
+    class Meta:  # настройки формы
+        model = University  # таблица университетов
+        fields = "__all__"  # показываем все поля
+
+    def clean(self):  # дополнительная проверка формы
+        data = super().clean()  # сначала обычная проверка
+        if not data.get("is_demo", True) and not (data.get("source_url") and data.get("verified_on")):  # реальному вузу нужны ссылка и дата
+            raise ValidationError("Для реального вуза укажите официальный источник и дату его проверки.")  # показываем ошибку
+        return data  # возвращаем проверенные данные
+
+
+@admin.register(University)  # подключаем вузы к админке
+class UniversityAdmin(admin.ModelAdmin):  # настройки списка вузов
+    form = UniversityAdminForm  # используем форму выше
+    list_display = ("name", "country", "major", "ielts", "gpa", "tuition", "is_demo")  # колонки в списке
+    list_filter = ("country", "major", "is_demo")  # фильтры справа
+    search_fields = ("name", "city")  # поиск по названию и городу

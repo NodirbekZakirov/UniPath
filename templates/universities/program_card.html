@@ -1,0 +1,27 @@
+{% with university=result.university %} {# короткое имя university #}
+<article class="program-row subject-{{ university.major }}"> {# карточка, цвет зависит от специальности #}
+    <div class="program-info"> {# левая колонка #}
+        <p class="location">{{ university.country }} · {{ university.city }}</p> {# страна и город #}
+        <h3><a href="{% url 'university' university.pk %}">{{ university.name }}</a></h3> {# название со ссылкой #}
+        <p class="major">{{ university.get_major_display }}</p> {# специальность #}
+        <p class="record-meta">{% if university.is_demo %}Учебный пример{% else %}Проверено {{ university.verified_on|date:'d.m.Y' }}{% endif %}{% if university.scholarship %}<span>Есть стипендии</span>{% endif %}</p> {# дата проверки и стипендии #}
+    </div> {# конец левой колонки #}
+    <dl class="requirements"> {# требования #}
+        <div><dt>IELTS от</dt><dd>{{ university.ielts }}</dd>{% if not result.checks.0.passed %}<small>Балл ниже</small>{% endif %}</div> {# IELTS и предупреждение #}
+        <div><dt>GPA от</dt><dd>{{ university.gpa }}</dd>{% if not result.checks.1.passed %}<small>Балл ниже</small>{% endif %}</div> {# GPA и предупреждение #}
+        <div><dt>Обучение / год</dt><dd>${{ university.tuition }}</dd>{% if not result.checks.2.passed %}<small>Выше бюджета</small>{% endif %}</div> {# стоимость и предупреждение #}
+    </dl> {# конец требований #}
+    <div class="program-action"> {# правая колонка #}
+        <p class="score {% if result.score == 100 %}complete{% endif %}" aria-label="Соответствие: {{ result.score }} из 100 баллов">{{ result.score }}<span> / 100</span></p> {# баллы, зелёные при 100 #}
+        <a class="details-link" href="{% url 'university' university.pk %}">Условия программы <span aria-hidden="true">→</span></a> {# ссылка на условия #}
+        {% if active == 'saved' %} {# если это страница сохранённых #}
+            <form method="post" action="{% url 'save' university.pk %}"> {# форма удаления #}
+                {% csrf_token %} {# защита формы #}
+                <button class="remove" name="action" value="remove" type="submit">Удалить из сохранённых</button> {# кнопка удаления #}
+            </form> {# конец формы #}
+        {% elif university.pk in saved_ids %} {# если вуз уже сохранён #}
+            <span class="saved-label">Сохранено</span> {# метка «Сохранено» #}
+        {% endif %} {# конец условия #}
+    </div> {# конец правой колонки #}
+</article> {# конец карточки #}
+{% endwith %} {# конец короткого имени #}

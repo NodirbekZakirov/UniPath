@@ -1,71 +1,111 @@
-from django.contrib import messages  # Показываем уведомления о сохранении и регистрации | from/import подключают указанные имена.
-from django.contrib.auth.decorators import login_required  # Защищаем личные страницы проверкой входа | from/import подключают указанные имена.
-from django.contrib.auth.forms import UserCreationForm  # Используем готовую безопасную форму регистрации | from/import подключают указанные имена.
-from django.core.paginator import Paginator  # Делим длинный список результатов на страницы | from/import подключают указанные имена.
-from django.shortcuts import get_object_or_404, redirect, render  # Получаем записи, перенаправляем и возвращаем HTML | from/import подключают указанные имена.
-from django.views.decorators.http import require_POST  # Разрешаем изменения данных только POST-запросом | from/import подключают указанные имена.
-from .forms import SearchForm, DEFAULT_PROFILE  # Подключаем проверяемую форму и начальный профиль | from/import подключают указанные имена.
-from .matching import calculate_match  # Подключаем собственный алгоритм соответствия | from/import подключают указанные имена.
-from .models import University, SavedUniversity  # Подключаем таблицы вузов и сохранений | from/import подключают указанные имена.
-from .forms import CostForm, DEFAULT_COSTS  # Подключаем проверку сумм и стартовый пример калькулятора | from/import подключают указанные имена.
-from .costs import calculate_costs  # Получаем отдельную понятную формулу расчёта расходов | from/import подключают указанные имена.
-def home(request):  # Обрабатываем главную страницу и GET-форму подбора | def объявляет функцию/метод; получает request — HTTP-запрос; проверяет профиль, считает и показывает подбор.
-    profile = request.session.get("profile", DEFAULT_PROFILE)  # Берём последний корректный профиль из сессии или стартовый пример | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа.
-    form = SearchForm(request.GET if "ielts" in request.GET else None, initial=profile)  # Связываем форму с запросом только при отправке профиля | SearchForm — класс проверки IELTS, GPA, бюджета, специальности и страны | initial — начальные значения формы.
-    results = []  # Готовим пустой список, который сохранится при ошибке формы.
-    if not form.is_bound or form.is_valid():  # Продолжаем только для стартовой страницы или корректного ввода | is_valid — проверяет форму и возвращает True/False; ошибки доступны в errors | is_bound — связана ли форма с переданными данными.
-        if form.is_bound:  # Проверяем, была ли отправлена заполненная форма | is_bound — связана ли форма с переданными данными.
-            profile = form.cleaned_data  # Берём проверенные числа и допустимые значения | cleaned_data — словарь успешно проверенных и преобразованных значений.
-            request.session["profile"] = profile  # Запоминаем профиль для карточек и избранного в этой сессии.
-        universities = University.objects.all()  # Начинаем с всех университетов в базе | all — возвращает QuerySet всех записей модели; SQL обычно выполняется при обращении к результатам.
-        if profile.get("country"):  # Проверяем, выбрал ли пользователь конкретную страну | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа.
-            universities = universities.filter(country=profile["country"])  # Ограничиваем выборку этой страной на уровне SQL | filter — возвращает QuerySet записей, соответствующих именованным условиям.
-        results = [calculate_match(profile, university) for university in universities]  # Рассчитываем оценку для каждого найденного вуза | calculate_match — наша функция: профиль и программа → баллы и объяснение четырёх сравнений.
-        results.sort(key=lambda result: (-result["score"], result["university"].name))  # Ставим больший балл первым; одинаковые баллы сортируем по названию | sort — сортирует текущий список; key вычисляет ключ, lambda — короткая функция ключа | key — функция ключа сортировки.
-    page = Paginator(results, 6).get_page(request.GET.get("page"))  # Показываем по шесть карточек и безопасно обрабатываем номер страницы | get_page — возвращает допустимую страницу, корректируя неправильный номер | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа | Paginator — класс деления списка на страницы; второй аргумент — размер страницы.
-    query = request.GET.copy()  # Копируем параметры, чтобы сохранить фильтры при переходе между страницами | copy — создаёт отдельную поверхностную копию словаря или параметров запроса.
-    query.pop("page", None)  # Убираем старый номер страницы перед добавлением нового | pop — получает и удаляет ключ словаря; запасной аргумент предотвращает KeyError.
-    saved_ids = set(SavedUniversity.objects.filter(user=request.user).values_list("university_id", flat=True)) if request.user.is_authenticated else set()  # Получаем ID только собственных сохранённых вузов | set — создаёт множество уникальных значений для быстрой проверки принадлежности | values_list — выбирает значения полей; flat=True убирает одноэлементные кортежи | filter — возвращает QuerySet записей, соответствующих именованным условиям | flat — плоский результат одного поля | is_authenticated — вошёл ли пользователь; это свойство, не вызов метода.
-    return render(request, "home.html", {"form": form, "page": page, "total": len(results), "query": query.urlencode(), "saved_ids": saved_ids, "active": "home"})  # Передаём шаблону результаты, форму и навигацию | render — создаёт HTTP-ответ из request, HTML-шаблона и словаря контекста | len — возвращает число элементов | urlencode — кодирует параметры в строку адреса, сохраняя фильтры пагинации | return завершает вызов и отдаёт результат вызывающему коду.
-def university_detail(request, pk):  # Показываем подробную информацию об одном университете | def объявляет функцию/метод; request — запрос, pk — ID; возвращает карточку программы или 404.
-    university = get_object_or_404(University, pk=pk)  # Возвращаем 404, если записи с таким ID нет | get_object_or_404 — получает объект модели по условию или возвращает HTTP 404.
-    profile = request.session.get("profile", DEFAULT_PROFILE)  # Получаем исходные оценки и бюджет для расчёта и показа пользователю | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа.
-    result = calculate_match(profile, university)  # Рассчитываем объяснение по показанному на странице профилю | calculate_match — наша функция: профиль и программа → баллы и объяснение четырёх сравнений.
-    is_saved = request.user.is_authenticated and SavedUniversity.objects.filter(user=request.user, university=university).exists()  # Проверяем личное сохранение этого вуза | exists — проверяет наличие хотя бы одной подходящей записи | filter — возвращает QuerySet записей, соответствующих именованным условиям | is_authenticated — вошёл ли пользователь; это свойство, не вызов метода.
-    return render(request, "university.html", {"result": result, "is_saved": is_saved, "profile": profile})  # Передаём карточке критерии, исходные данные и статус сохранения | render — создаёт HTTP-ответ из request, HTML-шаблона и словаря контекста | return завершает вызов и отдаёт результат вызывающему коду.
-@login_required  # Разрешаем смотреть избранное только после входа | декоратор проверяет вход перед вызовом; гостя перенаправляет на LOGIN_URL.
-def saved(request):  # Показываем личный список сохранённых университетов | def объявляет функцию/метод; request содержит пользователя; показывает только его сохранения.
-    links = SavedUniversity.objects.filter(user=request.user).select_related("university")  # Получаем собственные сохранения и вузы одним SQL-запросом | select_related — подгружает связанную модель одним SQL-запросом через JOIN | filter — возвращает QuerySet записей, соответствующих именованным условиям.
-    results = [calculate_match(request.session.get("profile", DEFAULT_PROFILE), link.university) for link in links]  # Пересчитываем соответствие по текущему профилю | calculate_match — наша функция: профиль и программа → баллы и объяснение четырёх сравнений | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа.
-    return render(request, "saved.html", {"results": results, "active": "saved"})  # Передаём список и активный пункт меню в шаблон | render — создаёт HTTP-ответ из request, HTML-шаблона и словаря контекста | return завершает вызов и отдаёт результат вызывающему коду.
-@login_required  # Требуем авторизацию для изменения избранного | декоратор проверяет вход перед вызовом; гостя перенаправляет на LOGIN_URL.
-@require_POST  # Не разрешаем изменять данные обычным переходом по ссылке | декоратор разрешает только POST; другой метод получает HTTP 405.
-def save_university(request, pk):  # Обрабатываем явное сохранение или удаление связи | def объявляет функцию/метод; request содержит POST-действие и пользователя, pk — ID; сохраняет или удаляет свою связь.
-    university = get_object_or_404(University, pk=pk)  # Проверяем существование университета | get_object_or_404 — получает объект модели по условию или возвращает HTTP 404.
-    if request.POST.get("action") == "remove":  # Выполняем удаление только при явном действии remove | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа.
-        SavedUniversity.objects.filter(user=request.user, university=university).delete()  # Удаляем исключительно собственное сохранение | delete — удаляет записи выбранного QuerySet и применяет правила связанных моделей | filter — возвращает QuerySet записей, соответствующих именованным условиям.
-        messages.success(request, "Университет удалён из сохранённых.")  # Показываем подтверждение изменения | success — добавляет уведомление об успешном действии в систему messages.
-        return redirect("saved")  # Возвращаем пользователя к личному списку | redirect — возвращает перенаправление; имя маршрута и pk определяют конечный адрес | return завершает вызов и отдаёт результат вызывающему коду.
-    SavedUniversity.objects.get_or_create(user=request.user, university=university)  # Создаём связь или оставляем существующую без дубликата | get_or_create — находит запись или создаёт; возвращает пару (объект, создана ли сейчас).
-    messages.success(request, "Университет сохранён. Вы найдёте его в своём списке.")  # Подтверждаем сохранение | success — добавляет уведомление об успешном действии в систему messages.
-    return redirect("university", pk=pk)  # Открываем карточку только что сохранённого вуза | redirect — возвращает перенаправление; имя маршрута и pk определяют конечный адрес | return завершает вызов и отдаёт результат вызывающему коду.
-def register(request):  # Обрабатываем показ и отправку формы регистрации | def объявляет функцию/метод; request содержит метод и данные; показывает форму или создаёт обычного пользователя.
-    form = UserCreationForm(request.POST if request.method == "POST" else None)  # Используем стандартные проверки логина и пароля Django | UserCreationForm — готовая форма Django для проверки регистрации и сохранения хеша пароля.
-    if request.method == "POST" and form.is_valid():  # Создаём учётную запись только после успешной проверки | is_valid — проверяет форму и возвращает True/False; ошибки доступны в errors.
-        form.save()  # Сохраняем пользователя с безопасным хешем пароля | save — метод формы: сохраняет проверенные данные; UserCreationForm хеширует пароль.
-        messages.success(request, "Аккаунт создан. Теперь войдите в UniPath.")  # Сообщаем об успешной регистрации | success — добавляет уведомление об успешном действии в систему messages.
-        return redirect("login")  # Переводим пользователя на стандартную страницу входа | redirect — возвращает перенаправление; имя маршрута и pk определяют конечный адрес | return завершает вызов и отдаёт результат вызывающему коду.
-    return render(request, "registration/register.html", {"form": form})  # Показываем форму и ошибки, если они возникли | render — создаёт HTTP-ответ из request, HTML-шаблона и словаря контекста | return завершает вызов и отдаёт результат вызывающему коду.
-def costs(request, pk=None):  # Открываем калькулятор самостоятельно или для выбранной программы | def объявляет функцию/метод; request содержит суммы, pk=None означает необязательную программу; проверяет и показывает расчёт.
-    university = get_object_or_404(University, pk=pk) if pk is not None else None  # Получаем стоимость из базы, если адрес содержит ID программы | get_object_or_404 — получает объект модели по условию или возвращает HTTP 404.
-    initial = request.session.get("costs", DEFAULT_COSTS).copy()  # Используем последний расчёт этой сессии или условный начальный пример | copy — создаёт отдельную поверхностную копию словаря или параметров запроса | get — получает значение по ключу; второй аргумент — запасное значение при отсутствии ключа.
-    if university:  # Проверяем, перешёл ли пользователь из конкретной программы.
-        initial["tuition"] = university.tuition  # Подставляем стоимость её обучения, оставляя остальные расходы редактируемыми.
-    form = CostForm(request.GET if request.GET else None, initial=initial)  # Проверяем отправленные параметры или показываем начальную форму | CostForm — класс проверки семи полей расходов | initial — начальные значения формы.
-    result = None  # При неверном вводе не выдаём устаревшую сумму.
-    if not form.is_bound or form.is_valid():  # Считаем только начальные или успешно проверенные значения | is_valid — проверяет форму и возвращает True/False; ошибки доступны в errors | is_bound — связана ли форма с переданными данными.
-        data = form.cleaned_data if form.is_bound else initial  # Выбираем данные с корректными числовыми типами | cleaned_data — словарь успешно проверенных и преобразованных значений | is_bound — связана ли форма с переданными данными.
-        result = calculate_costs(data)  # Передаём числа в чистую функцию без запросов к базе | calculate_costs — наша функция: расходы → стипендия → оплата и остаток бюджета.
-        if form.is_bound:  # Сохраняем только явно отправленный корректный расчёт | is_bound — связана ли форма с переданными данными.
-            request.session["costs"] = data  # Запоминаем расходы отдельно от академического профиля.
-    return render(request, "costs.html", {"form": form, "result": result, "university": university, "active": "costs"})  # Отображаем форму, результат и активный раздел меню | render — создаёт HTTP-ответ из request, HTML-шаблона и словаря контекста | return завершает вызов и отдаёт результат вызывающему коду.
+from django.contrib import messages  # уведомления на странице
+from django.contrib.auth.decorators import login_required  # login_required: только для вошедших
+from django.contrib.auth.forms import UserCreationForm  # готовая форма регистрации
+from django.core.paginator import Paginator  # делит список на страницы
+from django.shortcuts import get_object_or_404, redirect, render  # найти запись, перейти, показать страницу
+from django.views.decorators.http import require_POST  # require_POST: только POST-запросы
+
+from .costs import calculate_costs  # наш расчёт расходов
+from .forms import DEFAULT_COSTS, DEFAULT_PROFILE, CostForm, SearchForm  # наши формы и стартовые значения
+from .matching import calculate_match, find_matches  # наш расчёт баллов и подбор
+from .models import SavedUniversity, University  # таблицы базы данных
+
+RESULTS_PER_PAGE = 6  # карточек на одной странице
+
+
+def get_profile(request):  # достаёт данные абитуриента
+    return request.session.get("profile", DEFAULT_PROFILE)  # из сессии или стартовый пример
+
+
+def home(request):  # главная страница с подбором
+    profile = get_profile(request)  # последние сохранённые данные
+    form = SearchForm(request.GET if "ielts" in request.GET else None, initial=profile)  # заполняем форму, если её отправили
+    results = []  # при ошибке список останется пустым
+    if not form.is_bound:  # форму ещё не отправляли
+        results = find_matches(profile)  # подбор по сохранённым данным
+    elif form.is_valid():  # форму отправили без ошибок
+        request.session["profile"] = form.cleaned_data  # запоминаем новые данные
+        results = find_matches(form.cleaned_data)  # подбор по новым данным
+
+    query = request.GET.copy()  # копия параметров из адреса
+    query.pop("page", None)  # убираем старый номер страницы
+    saved_ids = set()  # для гостя сохранённых нет
+    if request.user.is_authenticated:  # если пользователь вошёл
+        saved_ids = set(  # собираем ID его вузов
+            SavedUniversity.objects.filter(user=request.user).values_list("university_id", flat=True)  # только его записи
+        )  # конец set
+    return render(request, "universities/home.html", {  # показываем главную страницу
+        "form": form,  # форма
+        "page": Paginator(results, RESULTS_PER_PAGE).get_page(request.GET.get("page")),  # карточки текущей страницы
+        "total": len(results),  # всего программ
+        "query": query.urlencode(),  # фильтры для ссылок страниц
+        "saved_ids": saved_ids,  # сохранённые вузы
+        "active": "home",  # активный пункт меню
+    })  # конец вызова
+
+
+def university_detail(request, pk):  # страница одной программы
+    university = get_object_or_404(University, pk=pk)  # ищем вуз или ошибка 404
+    profile = get_profile(request)  # данные абитуриента
+    is_saved = (  # сохранил ли пользователь этот вуз
+        request.user.is_authenticated  # пользователь вошёл
+        and SavedUniversity.objects.filter(user=request.user, university=university).exists()  # и запись есть в базе
+    )  # конец условия
+    return render(request, "universities/university.html", {  # показываем страницу программы
+        "university": university,  # сам вуз
+        "result": calculate_match(profile, university),  # баллы и проверки
+        "is_saved": is_saved,  # сохранён или нет
+        "profile": profile,  # данные абитуриента
+    })  # конец вызова
+
+
+@login_required  # только для вошедших
+def saved(request):  # страница сохранённых вузов
+    profile = get_profile(request)  # данные абитуриента
+    links = SavedUniversity.objects.filter(user=request.user).select_related("university")  # записи пользователя вместе с вузами
+    results = [calculate_match(profile, link.university) for link in links]  # считаем баллы для каждого
+    return render(request, "universities/saved.html", {"results": results, "active": "saved"})  # показываем список
+
+
+@login_required  # только для вошедших
+@require_POST  # только через форму, не по ссылке
+def save_university(request, pk):  # сохраняет или удаляет вуз
+    university = get_object_or_404(University, pk=pk)  # ищем вуз или ошибка 404
+    if request.POST.get("action") == "remove":  # если нажали «удалить»
+        SavedUniversity.objects.filter(user=request.user, university=university).delete()  # удаляем только свою запись
+        messages.success(request, "Университет удалён из сохранённых.")  # уведомление об удалении
+        return redirect("saved")  # возвращаемся к списку
+    SavedUniversity.objects.get_or_create(user=request.user, university=university)  # сохраняем без дублей
+    messages.success(request, "Университет сохранён. Вы найдёте его в своём списке.")  # уведомление о сохранении
+    return redirect("university", pk=pk)  # возвращаемся на страницу вуза
+
+
+def register(request):  # страница регистрации
+    form = UserCreationForm(request.POST if request.method == "POST" else None)  # заполняем форму, если это POST
+    if form.is_valid():  # данные без ошибок
+        form.save()  # создаём пользователя
+        messages.success(request, "Аккаунт создан. Теперь войдите в UniPath.")  # уведомление об успехе
+        return redirect("login")  # переходим ко входу
+    return render(request, "registration/register.html", {"form": form})  # показываем форму и ошибки
+
+
+def costs(request, pk=None):  # страница калькулятора
+    university = get_object_or_404(University, pk=pk) if pk is not None else None  # вуз, если указан номер в адресе
+    initial = request.session.get("costs", DEFAULT_COSTS).copy()  # прошлые суммы или стартовые
+    if university:  # если открыли для конкретного вуза
+        initial["tuition"] = university.tuition  # подставляем его стоимость
+
+    form = CostForm(request.GET or None, initial=initial)  # заполняем форму, если её отправили
+    result = None  # при ошибке результата не будет
+    if not form.is_bound:  # форму ещё не отправляли
+        result = calculate_costs(initial)  # считаем по стартовым суммам
+    elif form.is_valid():  # форму отправили без ошибок
+        request.session["costs"] = form.cleaned_data  # запоминаем суммы
+        result = calculate_costs(form.cleaned_data)  # считаем по новым суммам
+
+    return render(request, "universities/costs.html", {  # показываем калькулятор
+        "form": form,  # форма
+        "result": result,  # результат расчёта
+        "university": university,  # выбранный вуз
+        "active": "costs",  # активный пункт меню
+    })  # конец вызова

@@ -1,0 +1,174 @@
+.back-link { /* ссылка назад */
+    display: inline-block; /* в строке, но со своими размерами */
+    margin-top: 30px; /* отступ сверху */
+    font-size: .875rem; /* размер текста */
+    text-decoration: none; /* без подчёркивания */
+}
+
+.detail-heading { /* заголовок страницы программы */
+    padding-top: 22px; /* внутренний отступ сверху */
+}
+
+.detail-heading .location { /* страна и город над названием */
+    margin: 0 0 9px; /* внешний отступ */
+}
+
+.detail-heading h1 { /* название вуза */
+    max-width: 850px; /* максимальная ширина */
+    overflow-wrap: anywhere; /* перенос длинных слов */
+}
+
+.detail-grid { /* две колонки страницы */
+    display: grid; /* сетка */
+    grid-template-columns: minmax(0, 1fr) 360px; /* ширина колонок */
+    gap: 28px; /* промежуток между элементами */
+    margin-top: 28px; /* отступ сверху */
+    align-items: start; /* выравнивание по вертикали */
+}
+
+.detail-section { /* один раздел */
+    border-bottom: 1px solid var(--line); /* рамка снизу */
+    padding: 23px 0; /* внутренний отступ */
+}
+
+.description { /* текст описания */
+    margin-top: 16px; /* отступ сверху */
+    color: #505b65; /* цвет текста */
+    white-space: pre-line; /* сохранять переносы строк */
+}
+
+.facts { /* список условий */
+    margin-top: 13px; /* отступ сверху */
+}
+
+.facts > div { /* одна строка условия */
+    display: grid; /* сетка */
+    grid-template-columns: 1fr 1.25fr; /* ширина колонок */
+    gap: 16px; /* промежуток между элементами */
+    padding: 13px 0; /* внутренний отступ */
+    border-bottom: 1px solid #edf0f2; /* рамка снизу */
+}
+
+.facts dt { /* название условия */
+    color: var(--muted); /* цвет текста */
+    font-size: .9375rem; /* размер текста */
+}
+
+.facts dd { /* значение условия */
+    margin: 0; /* без внешнего отступа */
+    font-size: .9375rem; /* размер текста */
+}
+
+.source-link { /* ссылка на источник */
+    display: inline-block; /* в строке, но со своими размерами */
+    margin-top: 16px; /* отступ сверху */
+}
+
+.match-panel { /* панель с баллами */
+    background: #eaf1fc; /* цвет фона */
+    padding: 26px; /* внутренний отступ */
+    border: 1px solid #d1def1; /* рамка */
+    border-top: 4px solid #4778ce; /* рамка сверху */
+    border-radius: 10px; /* скругление углов */
+}
+
+.detail-score { /* крупная сумма баллов */
+    font: 400 2.8rem/1.2 Georgia, serif; /* шрифт */
+    margin: 14px 0 10px; /* внешний отступ */
+}
+
+.detail-score > span { /* подпись «из 100 баллов» */
+    font: 400 .875rem/1.5 "Segoe UI", Arial, sans-serif; /* шрифт */
+    color: var(--muted); /* цвет текста */
+}
+
+.profile-summary { /* данные абитуриента */
+    font-size: .8125rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+    padding-bottom: 18px; /* внутренний отступ снизу */
+    border-bottom: 1px solid var(--line); /* рамка снизу */
+}
+
+.check-row { /* одна проверка */
+    display: flex; /* элементы в ряд */
+    align-items: center; /* выравнивание по вертикали */
+    gap: 10px; /* промежуток между элементами */
+    padding: 14px 0; /* внутренний отступ */
+    border-bottom: 1px solid var(--line); /* рамка снизу */
+}
+
+.check-symbol { /* место для галочки */
+    width: 17px; /* ширина */
+    flex-shrink: 0; /* не сжимать */
+}
+
+.pass { /* выполнено: зелёный */
+    color: #2f6650; /* цвет текста */
+}
+
+.fail { /* не выполнено: цвет ошибки */
+    color: var(--red); /* цвет текста */
+}
+
+.check-row > div { /* текст проверки */
+    flex: 1; /* занять свободное место */
+    min-width: 0; /* минимальная ширина */
+}
+
+.check-row strong { /* название проверки */
+    display: block; /* на всю строку */
+    font-size: .875rem; /* размер текста */
+    font-weight: 600; /* жирность */
+}
+
+.check-row div > span { /* результат словами */
+    display: block; /* на всю строку */
+    font-size: .75rem; /* размер текста */
+    color: var(--muted); /* цвет текста */
+}
+
+.check-row b { /* полученные баллы */
+    font-size: .875rem; /* размер текста */
+    font-weight: 600; /* жирность */
+}
+
+.check-row b span { /* максимум баллов */
+    color: var(--muted); /* цвет текста */
+    font-size: .75rem; /* размер текста */
+    font-weight: 400; /* жирность */
+}
+
+.edit-profile { /* ссылка к форме профиля */
+    display: block; /* на всю строку */
+    text-align: center; /* текст по центру */
+    margin-top: 16px; /* отступ сверху */
+    font-size: .8125rem; /* размер текста */
+}
+
+.detail-body { /* левая белая колонка */
+    padding: 0 28px 26px; /* внутренний отступ */
+    background: white; /* цвет фона */
+    border: 1px solid var(--line); /* рамка */
+    border-radius: 10px; /* скругление углов */
+}
+
+.cost-link { /* ссылка на калькулятор */
+    display: block; /* на всю строку */
+    margin-top: 23px; /* отступ сверху */
+    padding: 17px 19px; /* внутренний отступ */
+    background: #fff5e2; /* цвет фона */
+    border: 1px solid #f1dfb9; /* рамка */
+    border-radius: 7px; /* скругление углов */
+    text-decoration: none; /* без подчёркивания */
+    color: #795621; /* цвет текста */
+}
+
+.cost-link strong, /* этот же стиль */
+.cost-link span { /* каждая часть с новой строки */
+    display: block; /* на всю строку */
+}
+
+.cost-link span { /* пояснение в ссылке */
+    font-size: .8125rem; /* размер текста */
+    margin-top: 5px; /* отступ сверху */
+}

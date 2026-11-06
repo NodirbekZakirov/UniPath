@@ -1,0 +1,6 @@
+<div class="field{% if highlight_errors and field.errors %} invalid{% endif %}"> {# одно поле, красная рамка при ошибке #}
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label> {# подпись поля #}
+    {{ field }} {# само поле ввода #}
+    {% if field.help_text %}<div class="help">{{ field.help_text|safe }}</div>{% endif %} {# подсказка, если есть #}
+    {{ field.errors }} {# ошибки поля #}
+</div> {# конец поля #}
